@@ -1,5 +1,5 @@
 input.onButtonPressed(Button.A, function () {
-    if (タイマー設定 == 0) {
+    if (タイマー設定 == 1) {
         if (分セット < 4) {
             分セット += 1
         } else {
@@ -10,6 +10,10 @@ input.onButtonPressed(Button.A, function () {
             動作 += 1
         } else {
             動作 = 0
+            if (音 != 0) {
+                music.stopMelody(MelodyStopOptions.All)
+                音 = 0
+            }
         }
     }
 })
@@ -25,10 +29,13 @@ input.onButtonPressed(Button.AB, function () {
         タイマー設定 = 1
     } else {
         タイマー設定 = 0
+        分 = 分セット
+        秒 = 秒セット
+        TimeDisp()
     }
 })
 input.onButtonPressed(Button.B, function () {
-    if (タイマー設定 == 0) {
+    if (タイマー設定 == 1) {
         if (秒セット < 50) {
             秒セット += 10
         } else {
@@ -43,6 +50,7 @@ input.onButtonPressed(Button.B, function () {
 })
 let 秒表示 = 0
 let 分表示 = 0
+let 音 = 0
 let 動作 = 0
 let 秒 = 0
 let 分 = 0
@@ -60,12 +68,14 @@ _4digit.set(7)
 秒 = 0
 let コロン = 1
 動作 = 0
+音 = 0
 TimeDisp()
 basic.forever(function () {
     if (動作 == 1) {
         if (分 == 0 && 秒 == 0) {
-            if (コロン == 1) {
-                music.playTone(988, music.beat(BeatFraction.Whole))
+            if (音 == 0) {
+                音 = 1
+                music.startMelody(music.builtInMelody(Melodies.Entertainer), MelodyOptions.ForeverInBackground)
             }
         } else {
             if (秒 > 0) {
@@ -94,6 +104,9 @@ basic.forever(function () {
         _4digit.clear()
         basic.pause(200)
     } else {
+        分表示 = 分
+        秒表示 = 秒
+        TimeDisp()
         コロン = 1
         _4digit.point(true)
         basic.pause(1000)
